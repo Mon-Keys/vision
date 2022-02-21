@@ -10,13 +10,15 @@ jobs:
 
       steps:
         - uses: actions/checkout@v2
-        - name: Convert test file to png image
-          uses: Burnett01/actions-drawio@1.2
+        - name: Convert test file to jpeg image
+          uses: ./
           with:
-            src: ArchitectureUML.drawio
-            dest: ArchitectureUML.png
+            quality: 100
+            scale: 1.0
+            src: ArchitectureUML.png
+            dest: test.jpeg
         - name: Upload image as artifact
           uses: actions/upload-artifact@v1
           with:
             name: png
-            path: ArchitectureUML.png
+            path: test.jpeg
