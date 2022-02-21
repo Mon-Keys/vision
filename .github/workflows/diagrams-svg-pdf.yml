@@ -9,9 +9,14 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-
-        - name: DrawIO CLI
-          run: apt install snapd && \
-               snap install drawio
+        - uses: actions/checkout@v2
+        - name: Convert test file to png image
+          uses: Burnett01/actions-drawio@1.2
+          with:
+            src: drawio/ArchitectureUML.drawio
+            dest: drawio/ArchitectureUML.svg
+        - name: Upload image as artifact
+          uses: actions/upload-artifact@v1
+          with:
+            name: svg
+            path: drawio/ArchitectureUML.svg
