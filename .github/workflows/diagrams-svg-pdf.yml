@@ -13,6 +13,5 @@ jobs:
           uses: actions/checkout@v2
 
         - name: DrawIO CLI
-          run: apt update && \
-               apt install snapd && \
+          run: apt install snapd && \
                snap install drawio
