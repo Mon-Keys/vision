@@ -1,0 +1,18 @@
+name: diagrams-svg-pfg
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  pdf:
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: DrawIO CLI
+          run: sudo apt update && \
+               sudo apt install snapd && \
+               sudo snap install drawio
