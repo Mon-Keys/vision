@@ -10,13 +10,10 @@ jobs:
 
       steps:
         - uses: actions/checkout@v2
-        - name: Convert test file to jpeg image
-          uses: ./
-          with:
-            quality: 100
-            scale: 1.0
-            src: ArchitectureUML.png
-            dest: test.jpeg
+        - name: Git clone drawio batch
+          run: git clone https://github.com/languitar/drawio-batch.git && \
+               cd drawio-batch && \
+               apt get install npm
         - name: Upload image as artifact
           uses: actions/upload-artifact@v1
           with:
