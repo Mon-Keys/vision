@@ -1,11 +1,42 @@
-<mxfile host="app.diagrams.net" modified="2022-02-21T11:00:29.724Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36" etag="-ZL-4VENkbJg16zP3pqF" version="16.6.1" type="github">
+<mxfile host="app.diagrams.net" modified="2022-03-09T17:49:15.160Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36" etag="mA4LVoRcFg9fgPfijQc5" version="16.6.5" type="github">
   <diagram id="VlI4yV_uTg2TwhiUSGPv" name="Page-1">
-    <mxGraphModel dx="1422" dy="729" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="813" dy="449" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="NEOfnlrzziuzG3Lcs1SN-1" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="680" y="440" width="160" height="60" as="geometry" />
+        <mxCell id="LOX2YdujfWf1-PtKSz2a-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="NEOfnlrzziuzG3Lcs1SN-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="900" y="413.9310344827586" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LOX2YdujfWf1-PtKSz2a-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="NEOfnlrzziuzG3Lcs1SN-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="900" y="469.1034482758621" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NEOfnlrzziuzG3Lcs1SN-1" value="Система контроля управления доступом&lt;br&gt;с использованием QR-кодов" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="427" y="304" width="315" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="LOX2YdujfWf1-PtKSz2a-1" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="NEOfnlrzziuzG3Lcs1SN-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="810" y="400" as="sourcePoint" />
+            <mxPoint x="900" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LOX2YdujfWf1-PtKSz2a-4" value="&lt;font style=&quot;font-size: 9px&quot;&gt;доставленные QR-пропуска&lt;br&gt;(статичные)&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="399" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="LOX2YdujfWf1-PtKSz2a-5" value="&lt;font style=&quot;font-size: 9px&quot;&gt;доставленные QR-пропуска&lt;br&gt;(динамические)&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="340" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="LOX2YdujfWf1-PtKSz2a-6" value="" style="endArrow=classic;html=1;rounded=0;fontSize=9;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" target="NEOfnlrzziuzG3Lcs1SN-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="360" as="sourcePoint" />
+            <mxPoint x="370" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LOX2YdujfWf1-PtKSz2a-7" value="&lt;font style=&quot;font-size: 9px&quot;&gt;доставленные QR-пропуска&lt;br&gt;(динамические)&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="287" y="340" width="140" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
