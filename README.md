@@ -1,8 +1,8 @@
 # vision
 
-## Entity relationship diagram
+## Диаграмма прецедентов
 
-![EntityRelationship](./svg/EntityRelationship.svg)
+![UsecaseUML](./svg/UsecaseUML.svg)
 
 
 ## Architecture UML
