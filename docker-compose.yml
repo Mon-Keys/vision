@@ -4,7 +4,7 @@ services:
  postgres:
     image: postgres:latest
     volumes:
-      - $PWD/db/sql/:/docker-entrypoint-initdb.d/
+      - ./db/sql/db.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
         POSTGRES_DB: 'vision'
         POSTGRES_USER: 'admin'

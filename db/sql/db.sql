@@ -47,15 +47,15 @@ CREATE UNLOGGED TABLE IF NOT EXISTS roles
 
 -- user 
 
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS users;
 
-CREATE UNLOGGED TABLE IF NOT EXISTS user
+CREATE UNLOGGED TABLE IF NOT EXISTS users
 (
     user_id serial not null primary key,
     user_password_hash varchar(256) not null,
     user_login varchar(256) not null unique,
     user_email varchar(128) not null unique,
-    user_created_date timestampz default now() not null,
+    user_created_date timestamptz default now() not null
 );
 
 
@@ -67,9 +67,8 @@ CREATE UNLOGGED TABLE IF NOT EXISTS account
 (
     account_id serial not null primary key,
     account_role_id int REFERENCES roles(role_id),
-    account_user_id int REFERENCES user(user_id),
-    account_fullname varchar(256) not null unique,
-    account_photo varbinary(2048)
+    account_user_id int REFERENCES users(user_id),
+    account_fullname varchar(256) not null unique
 );
 
 
@@ -82,10 +81,10 @@ CREATE UNLOGGED TABLE IF NOT EXISTS pass
     pass_id serial not null primary key,
     pass_account_id int REFERENCES account(account_id),
     pass_dynamic_qr boolean not null,
-    pass_expiration_date timestampz not null,
-    pass_issue_date timestampz DEFAULT now() not null,
+    pass_expiration_date timestamptz not null,
+    pass_issue_date timestamptz DEFAULT now() not null,
     pass_name varchar(256) not null,
-    pass_secure_data varbinary(1024) not null,
+    pass_secure_data varchar(1024) not null
 );
 
 
@@ -100,7 +99,7 @@ CREATE UNLOGGED TABLE IF NOT EXISTS passage
     pass_id int REFERENCES pass(pass_id) not null, 
     passage_status int not null,
     is_exit boolean not null,
-    passage_datetime timestampz DEFAULT now()
+    passage_datetime timestamptz DEFAULT now()
 );
 
 -- event type
@@ -120,7 +119,7 @@ DROP TABLE IF EXISTS pass_declaration;
 CREATE UNLOGGED TABLE IF NOT EXISTS pass_declaration
 (
     pass_declaration_id serial not null primary key,
-    pass_declaration_name citext not null,
+    pass_declaration_name citext not null
 );
 
 -- declaration events
@@ -133,7 +132,7 @@ CREATE UNLOGGED TABLE IF NOT EXISTS declaration_events
     declaration_events_event_type_id int REFERENCES event_type(event_type_id),
     declaration_pass_declaration_id int REFERENCES pass_declaration(pass_declaration_id),
     pass_declaration_creator_id int REFERENCES account(account_id),
-    pass_declaration_create_date timestampz DEFAULT now(),
+    pass_declaration_create_date timestamptz DEFAULT now(),
     pass_declaration_comment citext,
     pass_declaration_requests_count smallint not null
     CHECK (pass_declaration_requests_count > 0)
