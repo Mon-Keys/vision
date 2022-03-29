@@ -5,5 +5,10 @@ build:
 	mv ./main build/
 
 
-run:
-	go run ./...
+run-docker:
+	docker-compose up
+
+
+clean-docker:
+	docker system prune	-f
+	docker volume prune -f

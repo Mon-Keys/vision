@@ -1,11 +1,11 @@
-package app
+package vision_main
 
 import (
 	"fmt"
 
 	router "github.com/fasthttp/router"
 	"github.com/jackc/pgx"
-	"github.com/perlinleo/technopark-mail.ru-forum-database/internal/middleware"
+	"github.com/perlinleo/vision/internal/middleware"
 	"github.com/valyala/fasthttp"
 )
 
@@ -34,7 +34,7 @@ func NewRouter() *router.Router {
 	return router
 }
 
-func NewDataBase(connectionString string) (*pgx.ConnPool, error) {
+func NewPostgreSQLDataBase(connectionString string) (*pgx.ConnPool, error) {
 	fmt.Println(connectionString)
 	pgxConn, err := pgx.ParseConnectionString(connectionString)
 	if err != nil {

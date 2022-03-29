@@ -1,4 +1,4 @@
-package app
+package vision_main
 
 import (
 	"fmt"

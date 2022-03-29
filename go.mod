@@ -6,7 +6,7 @@ require (
 	github.com/fasthttp/router v1.4.7
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/perlinleo/technopark-mail.ru-forum-database v0.0.0-20220120190354-a5ac502cfb58
+	github.com/rs/zerolog v1.26.1
 	github.com/spf13/viper v1.10.1
 	github.com/valyala/fasthttp v1.34.0
 )
