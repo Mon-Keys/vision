@@ -36,6 +36,10 @@ func Start() error {
 		return err
 	}
 
+
+
+	
+
 	userCache := cache.New(5*time.Minute, 10*time.Minute)
 	userRepository := user_psql.NewUserPSQLRepository(PSQLConnPool, userCache)
 	
