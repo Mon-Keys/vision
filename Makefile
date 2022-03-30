@@ -1,13 +1,15 @@
 build:
 	rm -rf build
 	mkdir build
-	go build cmd/proxy/main.go
+	go build cmd/vision/main.go
 	mv ./main build/
 
 
 run-docker:
 	docker-compose up
 
+format:
+	go fmt ./...
 
 clean-docker:
 	docker system prune	-f

@@ -1,7 +1,7 @@
 package main
 
 import (
-	app "github.com/perlinleo/vision/internal/vision"
+	app "github.com/perlinleo/vision/internal/app"
 	"github.com/rs/zerolog/log"
 )
 
