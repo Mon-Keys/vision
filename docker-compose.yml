@@ -1,16 +1,30 @@
 version: '3'
 services:
 
- postgres:
+  postgres:
     image: postgres:latest
     volumes:
       - ./db/sql/db.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-        POSTGRES_DB: 'vision'
-        POSTGRES_USER: 'admin'
-        POSTGRES_PASSWORD: 'password'
+      POSTGRES_DB: 'vision'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: 'password'
     ports:
       - "5432:5432"
     restart: on-failure
     healthcheck:
       test: "exit 0"
+
+  redis:
+    image: "redis:alpine"
+
+    command: redis-server --requirepass sOmE_sEcUrE_pAsS
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - $PWD/redis-data:/var/lib/redis - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+
+    environment:
+      - REDIS_REPLICATION_MODE=master

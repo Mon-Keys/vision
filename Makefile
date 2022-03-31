@@ -6,7 +6,7 @@ build:
 
 
 run-docker:
-	docker-compose up
+	docker compose up --build
 
 format:
 	go fmt ./...

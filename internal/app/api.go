@@ -15,7 +15,12 @@ import (
 
 	user_http "github.com/perlinleo/vision/internal/user/delivery/http"
 	user_psql "github.com/perlinleo/vision/internal/user/repository/psql"
+
 	user_usecase "github.com/perlinleo/vision/internal/user/usecase"
+
+	status_http "github.com/perlinleo/vision/internal/status/delivery/http"
+	status_psql "github.com/perlinleo/vision/internal/status/repository/psql"
+	status_usecase "github.com/perlinleo/vision/internal/status/usecase"
 
 	"github.com/valyala/fasthttp"
 	// forum_http "github.com/perlinleo/technopark-mail.ru-forum-database/internal/app/forum/delivery"
@@ -34,26 +39,22 @@ func Start() error {
 		return err
 	}
 
-	userCache := cache.New(5*time.Minute, 10*time.Minute)
-	userRepository := user_psql.NewUserPSQLRepository(PSQLConnPool, userCache)
-
-	// forumRepository := forum_psql.NewForumPSQLRepository(ConnPool, userCache)
-
-	// threadRepository := thread_psql.NewThreadPSQLRepository(ConnPool, userCache)
-
-	// threadUsecase := thread_usecase.NewThreadUsecase(threadRepository, userRepository)
-
-	userUsecase := user_usecase.NewUserUsecase(userRepository)
-
-	// forumUsecase := forum_usecase.NewForumUsecase(forumRepository, threadRepository, userRepository, userCache)
 	router := router.New()
 
+	userCache := cache.New(5*time.Minute, 10*time.Minute)
+
+	statusCache := cache.New(5*time.Minute, 10*time.Minute)
+
+	userRepository := user_psql.NewUserPSQLRepository(PSQLConnPool, userCache)
+	userUsecase := user_usecase.NewUserUsecase(userRepository)
 	user_http.NewUserHandler(router, userUsecase)
 
-	// forum_http.NewForumHandler(router, forumUsecase)
-	// thread_http.NewThreadHandler(router, threadUsecase)
+	statusRepository := status_psql.NewStatusPSQLRepository(PSQLConnPool, statusCache)
+	statusUsecase := status_usecase.NewStatusUsecase(statusRepository)
+	status_http.NewStatusHandler(router, statusUsecase)
 
 	fmt.Printf("STARTING SERVICE ON PORT %s\n", config.App.Port)
+
 	err = fasthttp.ListenAndServe(config.App.Port, router.Handler)
 	if err != nil {
 		return err

@@ -9,9 +9,12 @@
     "database": {
         "host": "localhost",
         "port": "5432",
-        "user": "postgres",
+        "user": "admin",
         "pass": "password",
-        "name": "forum"
+        "name": "vision"
+    },
+    "redis": {
+        "host": "localhost"
     }
 
 }
