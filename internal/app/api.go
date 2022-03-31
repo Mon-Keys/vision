@@ -1,7 +1,7 @@
 package vision
 
 import (
-	"fmt"
+	"log"
 	"time"
 
 	router "github.com/fasthttp/router"
@@ -53,7 +53,7 @@ func Start() error {
 	statusUsecase := status_usecase.NewStatusUsecase(statusRepository)
 	status_http.NewStatusHandler(router, statusUsecase)
 
-	fmt.Printf("STARTING SERVICE ON PORT %s\n", config.App.Port)
+	log.Printf("STARTING SERVICE ON PORT %s\n", config.App.Port)
 
 	err = fasthttp.ListenAndServe(config.App.Port, router.Handler)
 	if err != nil {
