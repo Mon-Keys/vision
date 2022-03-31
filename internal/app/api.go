@@ -34,21 +34,34 @@ func Start() error {
 	if err != nil {
 		return err
 	}
+
 	PSQLConnPool, err := NewPostgreSQLDataBase(config.App.DatabaseURL)
 	if err != nil {
 		return err
 	}
+	log.Printf("PSQL Database connection success on %s", config.App.DatabaseURL)
+
+	RedisClient, err := NewRedisDataBase(config.RedisDB.addr, config.RedisDB.password, config.RedisDB.db)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Redis Database connection success on %s", config.App.DatabaseURL)
 
 	router := router.New()
 
+	//auth
+	authCache := cache.New(5*time.Minute, 10*time.Minute)
+	authRepository := auth_redis.NewStatusPSQLRepository
+
+	// usERR
 	userCache := cache.New(5*time.Minute, 10*time.Minute)
-
-	statusCache := cache.New(5*time.Minute, 10*time.Minute)
-
 	userRepository := user_psql.NewUserPSQLRepository(PSQLConnPool, userCache)
 	userUsecase := user_usecase.NewUserUsecase(userRepository)
 	user_http.NewUserHandler(router, userUsecase)
 
+	// status
+	statusCache := cache.New(5*time.Minute, 10*time.Minute)
 	statusRepository := status_psql.NewStatusPSQLRepository(PSQLConnPool, statusCache)
 	statusUsecase := status_usecase.NewStatusUsecase(statusRepository)
 	status_http.NewStatusHandler(router, statusUsecase)

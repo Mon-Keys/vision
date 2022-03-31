@@ -3,7 +3,7 @@ package vision
 import (
 	"errors"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 )
 
 func NewRedisDataBase(addr string, password string, db int) (redis.Client, error) {
