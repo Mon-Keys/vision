@@ -8,26 +8,30 @@ type User struct {
 	ID       int32     `json:"id,omitempty"`
 	Email    string    `json:"email"`
 	Created  time.Time `json:"created"`
-	Login    string    `json:"login"`
 	Password string    `json:"password"`
 }
 
 type NewUser struct {
-	Email    string    `json:"email"`
-	Created  time.Time `json:"created"`
-	Login    string    `json:"login"`
-	Password string    `json:"password"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type NewUserWithoutAccount struct {
+	FirstName string `json:firstName`
+	LastName  string `json:lastName`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
 }
 
 type UserRepository interface {
-	Create(forum *User) error
+	CreateUser(nuna *NewUser) error
 	FindByNickname(nickname string) (*User, error)
-	Find(nickname string, email string) ([]User, error)
+	Find(email string) (*User, error)
 	Update(user *User) (*User, error)
 }
 
 type UserUsecase interface {
-	CreateUser(user *User) ([]User, error)
+	SignUpUser(nuna *NewUserWithoutAccount) ([]User, error)
 	DuplicateUser(user *User) ([]User, error)
 	Find(nickname string) (*User, error)
 	Update(user *User) (*User, error)

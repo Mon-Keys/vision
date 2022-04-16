@@ -7,15 +7,12 @@ import (
 	router "github.com/fasthttp/router"
 	"github.com/patrickmn/go-cache"
 
-	// forum_psql "github.com/perlinleo/technopark-mail.ru-forum-database/internal/app/forum/repository"
-	// thread_psql "github.com/perlinleo/technopark-mail.ru-forum-database/internal/app/thread/repository"
-
-	// forum_usecase "github.com/perlinleo/technopark-mail.ru-forum-database/internal/app/forum/usecase"
-	// thread_usecase "github.com/perlinleo/technopark-mail.ru-forum-database/internal/app/thread/usecase"
+	session_http "github.com/perlinleo/vision/internal/session/delivery/http"
+	session_redis "github.com/perlinleo/vision/internal/session/repository/redis"
+	session_usecase "github.com/perlinleo/vision/internal/session/usecase"
 
 	user_http "github.com/perlinleo/vision/internal/user/delivery/http"
 	user_psql "github.com/perlinleo/vision/internal/user/repository/psql"
-
 	user_usecase "github.com/perlinleo/vision/internal/user/usecase"
 
 	status_http "github.com/perlinleo/vision/internal/status/delivery/http"
@@ -50,15 +47,17 @@ func Start() error {
 
 	router := router.New()
 
-	//auth
-	authCache := cache.New(5*time.Minute, 10*time.Minute)
-	authRepository := auth_redis.NewStatusPSQLRepository
-
 	// usERR
 	userCache := cache.New(5*time.Minute, 10*time.Minute)
 	userRepository := user_psql.NewUserPSQLRepository(PSQLConnPool, userCache)
 	userUsecase := user_usecase.NewUserUsecase(userRepository)
 	user_http.NewUserHandler(router, userUsecase)
+
+	//auth
+	authCache := cache.New(5*time.Minute, 10*time.Minute)
+	authRepository := session_redis.NewSessionRedisRepository(&RedisClient, authCache)
+	authUsecase := session_usecase.NewSessionUsecase(authRepository, userRepository)
+	session_http.NewSessionHandler(router, authUsecase)
 
 	// status
 	statusCache := cache.New(5*time.Minute, 10*time.Minute)

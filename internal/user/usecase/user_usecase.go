@@ -12,7 +12,11 @@ func NewUserUsecase(r domain.UserRepository) domain.UserUsecase {
 	}
 }
 
-func (u userUsecase) CreateUser(user *domain.User) ([]domain.User, error) {
+func (u userUsecase) SignUpUser(user *domain.NewUserWithoutAccount) ([]domain.User, error) {
+	newUser := new(domain.NewUser)
+	newUser.Email = user.Email
+	newUser.Password = user.Password
+	u.userRepository.CreateUser(newUser)
 	return nil, nil
 }
 

@@ -1,8 +1,8 @@
-make build --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/pierrelean/vision'
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/pierrelean/code/vision/vision'
 rm -rf build
 mkdir build
 go build cmd/vision/main.go
 mv ./main build/
-make: Leaving directory '/home/pierrelean/vision'
+make: Leaving directory '/home/pierrelean/code/vision/vision'
  

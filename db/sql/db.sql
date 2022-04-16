@@ -46,7 +46,6 @@ DROP TABLE IF EXISTS users;
 CREATE UNLOGGED TABLE IF NOT EXISTS users (
     user_id serial NOT NULL PRIMARY KEY,
     user_password_hash varchar(256) NOT NULL,
-    user_login varchar(256) NOT NULL UNIQUE,
     user_email varchar(128) NOT NULL UNIQUE,
     user_created_date timestamptz DEFAULT now() NOT NULL
 );

@@ -8,6 +8,11 @@ type Session struct {
 	Expiration time.Time
 }
 
+type LoginCredentials struct {
+	Email    string
+	Password string
+}
+
 type SessionRepository interface {
 	GetSessionByCookie(cookie string) (*Session, error)
 	NewSessionCookie(session *Session) error
@@ -15,7 +20,7 @@ type SessionRepository interface {
 }
 
 type SessionUsecase interface {
-	Create(session Session) error
+	Login(session LoginCredentials) error
 	Logout(session Session) error
 	GetSessionByCookie(cookie string) (*Session, error)
 }

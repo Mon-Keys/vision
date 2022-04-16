@@ -13,8 +13,8 @@
         "pass": "password",
         "name": "vision"
     },
+    "host": "localhost",
     "redis": {
-        "host": "localhost",
         "port": "6379",
         "password": "",
         "DB": 0
