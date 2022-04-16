@@ -30,14 +30,12 @@ func (m *userPsql) FindByNickname(nickname string) (*domain.User, error) {
 }
 func (m *userPsql) Find(email string) (*domain.User, error) {
 	query := "SELECT * FROM users WHERE user_email=$1"
+	userData := new(domain.User)
 
-	rows, err := m.Conn.Query(query, email)
+	err := m.Conn.QueryRow(query, email).Scan(&userData.ID, &userData.Password, &userData.Email, &userData.Created)
 	if err != nil {
 		return nil, err
 	}
-	userData := new(domain.User)
-
-	rows.Scan(&userData)
 
 	return nil, nil
 }
