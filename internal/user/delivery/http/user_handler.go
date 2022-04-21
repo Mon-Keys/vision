@@ -3,6 +3,7 @@ package delivery
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/fasthttp/router"
 	"github.com/perlinleo/vision/internal/domain"
@@ -25,11 +26,21 @@ func NewUserHandler(router *router.Router, usecase domain.UserUsecase) {
 
 func (h *userHandler) CreateUser(ctx *fasthttp.RequestCtx) {
 	NewUserNoAccount := new(domain.NewUserWithoutAccount)
+
 	err := json.Unmarshal(ctx.PostBody(), &NewUserNoAccount)
+
 	if err != nil {
+		log.Printf(err.Error())
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 	}
-	h.UserUsecase.SignUpUser(NewUserNoAccount)
+
+	err = h.UserUsecase.SignUpUser(NewUserNoAccount)
+
+	if err != nil {
+		log.Printf(err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+
 }
 
 func (h *userHandler) Cors(ctx *fasthttp.RequestCtx) {

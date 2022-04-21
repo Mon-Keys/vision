@@ -24,14 +24,14 @@ type NewUserWithoutAccount struct {
 }
 
 type UserRepository interface {
-	CreateUser(nuna *NewUser) error
+	CreateUser(nuna *NewUser) (int32, error)
 	FindByNickname(nickname string) (*User, error)
 	Find(email string) (*User, error)
 	Update(user *User) (*User, error)
 }
 
 type UserUsecase interface {
-	SignUpUser(nuna *NewUserWithoutAccount) ([]User, error)
+	SignUpUser(nuna *NewUserWithoutAccount) error
 	DuplicateUser(user *User) ([]User, error)
 	Find(nickname string) (*User, error)
 	Update(user *User) (*User, error)

@@ -3,21 +3,42 @@ package usecase
 import "github.com/perlinleo/vision/internal/domain"
 
 type userUsecase struct {
-	userRepository domain.UserRepository
+	userRepository    domain.UserRepository
+	accountRepository domain.AccountRepository
 }
 
-func NewUserUsecase(r domain.UserRepository) domain.UserUsecase {
+func NewUserUsecase(r domain.UserRepository, ar domain.AccountRepository) domain.UserUsecase {
 	return &userUsecase{
-		userRepository: r,
+		userRepository:    r,
+		accountRepository: ar,
 	}
 }
 
-func (u userUsecase) SignUpUser(user *domain.NewUserWithoutAccount) ([]domain.User, error) {
+func (u userUsecase) SignUpUser(user *domain.NewUserWithoutAccount) error {
 	newUser := new(domain.NewUser)
 	newUser.Email = user.Email
 	newUser.Password = user.Password
-	u.userRepository.CreateUser(newUser)
-	return nil, nil
+	userID, err := u.userRepository.CreateUser(newUser)
+
+	if err != nil {
+		// такой пользователь уже существует
+		return domain.ErrorUserConflict
+	}
+
+	newAccount := new(domain.NewAccount)
+
+	newAccount.Fullname = user.LastName + " " + user.FirstName
+	newAccount.UserID = userID
+
+	newAccount.RoleID = defaultNewAccountRoleID
+
+	err = u.accountRepository.CreateAccount(newAccount)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (u userUsecase) DuplicateUser(user *domain.User) ([]domain.User, error) {

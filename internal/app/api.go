@@ -15,6 +15,8 @@ import (
 	user_psql "github.com/perlinleo/vision/internal/user/repository/psql"
 	user_usecase "github.com/perlinleo/vision/internal/user/usecase"
 
+	account_psql "github.com/perlinleo/vision/internal/account/repository/psql"
+
 	status_http "github.com/perlinleo/vision/internal/status/delivery/http"
 	status_psql "github.com/perlinleo/vision/internal/status/repository/psql"
 	status_usecase "github.com/perlinleo/vision/internal/status/usecase"
@@ -47,10 +49,14 @@ func Start() error {
 
 	router := router.New()
 
+	// account
+	accountCache := cache.New(5*time.Minute, 10*time.Minute)
+	accountRepository := account_psql.NewAccountPSQLRepository(PSQLConnPool, accountCache)
+
 	// usERR
 	userCache := cache.New(5*time.Minute, 10*time.Minute)
 	userRepository := user_psql.NewUserPSQLRepository(PSQLConnPool, userCache)
-	userUsecase := user_usecase.NewUserUsecase(userRepository)
+	userUsecase := user_usecase.NewUserUsecase(userRepository, accountRepository)
 	user_http.NewUserHandler(router, userUsecase)
 
 	//auth

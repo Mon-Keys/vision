@@ -1,16 +1,14 @@
 package domain
 
-import "time"
-
 type Session struct {
 	Cookie     string
 	ID         string
-	Expiration time.Time
+	Expiration int32
 }
 
 type LoginCredentials struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type SessionRepository interface {
@@ -20,7 +18,7 @@ type SessionRepository interface {
 }
 
 type SessionUsecase interface {
-	Login(session LoginCredentials) error
+	Login(session LoginCredentials) (*Session, error)
 	Logout(session Session) error
 	GetSessionByCookie(cookie string) (*Session, error)
 }

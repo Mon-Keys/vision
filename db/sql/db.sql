@@ -57,7 +57,7 @@ CREATE UNLOGGED TABLE IF NOT EXISTS account (
     account_id serial NOT NULL PRIMARY KEY,
     account_role_id int REFERENCES roles (role_id),
     account_user_id int REFERENCES users (user_id),
-    account_fullname varchar(256) NOT NULL UNIQUE
+    account_fullname varchar(256) NOT NULL
 );
 
 -- pass
@@ -124,4 +124,13 @@ CREATE UNLOGGED TABLE IF NOT EXISTS pass_request (
     pass_request_approved boolean NOT NULL,
     pass_request_comment citext
 );
+
+INSERT INTO roles ( role_name , role_access_level ) 
+VALUES 
+('Новый пользователь', 0),
+('Сотрудник', 1),
+('Уполномоченное лицо', 2),
+('Сотрудник службы безопасности', 3),
+('Админ', 4);
+
 

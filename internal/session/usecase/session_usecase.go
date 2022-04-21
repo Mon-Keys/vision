@@ -1,9 +1,8 @@
 package usecase
 
 import (
-	"errors"
-
 	"github.com/perlinleo/vision/internal/domain"
+	cookie "github.com/perlinleo/vision/internal/pkg/cookie_generator"
 )
 
 type sessionUsecase struct {
@@ -18,17 +17,19 @@ func NewSessionUsecase(r domain.SessionRepository, ur domain.UserRepository) dom
 	}
 }
 
-func (su sessionUsecase) Login(session domain.LoginCredentials) error {
+func (su sessionUsecase) Login(session domain.LoginCredentials) (*domain.Session, error) {
 	// su.sessionRepository.NewSessionCookie()
 	userData, err := su.userRepository.Find(session.Email)
 	if err != nil {
-		return err
+		return nil, domain.ErrorCantFindUserWithEmail
 	}
 	if userData.Password != session.Password {
-		return errors.New("Wrong")
+		return nil, domain.ErrorWrongPassword
 	}
 
-	return nil
+	userSession := cookie.CreateAuthSessionUUID(string(userData.ID))
+
+	return userSession, nil
 }
 func (su sessionUsecase) Logout(session domain.Session) error {
 	return nil

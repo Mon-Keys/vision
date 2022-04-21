@@ -13,5 +13,5 @@ func NewUserUsecase(r domain.AccountRepository) domain.AccountUsecase {
 }
 
 func (au accountUsecase) CreateAccount(na *domain.NewAccount) error {
-	return nil
+	return au.accountRepository.CreateAccount(na)
 }

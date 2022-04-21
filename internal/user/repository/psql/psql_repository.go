@@ -18,12 +18,16 @@ func NewUserPSQLRepository(ConnectionPool *pgx.ConnPool, Cache *cache.Cache) dom
 	}
 }
 
-func (m *userPsql) CreateUser(user *domain.NewUser) error {
+func (m *userPsql) CreateUser(user *domain.NewUser) (int32, error) {
 	query := "INSERT INTO users (user_password_hash, user_email) " +
-		"VALUES ($1, $2)"
-	_, err := m.Conn.Exec(
-		query, user.Password, user.Email)
-	return err
+		"VALUES ($1, $2) RETURNING user_id"
+
+	var newUserID int32
+
+	err := m.Conn.QueryRow(
+		query, user.Password, user.Email).Scan(&newUserID)
+
+	return newUserID, err
 }
 func (m *userPsql) FindByNickname(nickname string) (*domain.User, error) {
 	return nil, nil
@@ -37,7 +41,7 @@ func (m *userPsql) Find(email string) (*domain.User, error) {
 		return nil, err
 	}
 
-	return nil, nil
+	return userData, nil
 }
 func (m *userPsql) Update(user *domain.User) (*domain.User, error) {
 	return nil, nil
