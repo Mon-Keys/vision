@@ -1,0 +1,27 @@
+name: Deployment
+
+on:
+  release:
+
+jobs:
+  build_and_deploy_to_remote:
+
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Setup Deployment Key
+      run: set -eu &&
+           mkdir "$HOME/.ssh" &&
+           echo "${{ secrets.AWS_CAR_PEM }}" > "$HOME/.ssh/key" &&
+           chmod 600 "$HOME/.ssh/key"
+      
+    - name: Install dependencies
+      run: npm ci
+    - name: Build
+      run: npm run build
+    
+    - name: Send to server
+      run: sudo rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --omit-dir-times --no-perms --delete dist/ ubuntu@13.49.221.51:/var/www/html/
+    
