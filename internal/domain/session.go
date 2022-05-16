@@ -1,8 +1,14 @@
 package domain
 
-type Session struct {
+type UserSession struct {
 	Cookie     string
-	ID         string
+	UserID     int32
+	Expiration int32
+}
+
+type AccountSession struct {
+	Cookie     string
+	AccountID  int32
 	Expiration int32
 }
 
@@ -12,13 +18,17 @@ type LoginCredentials struct {
 }
 
 type SessionRepository interface {
-	GetSessionByCookie(cookie string) (*Session, error)
-	NewSessionCookie(session *Session) error
-	DeleteSessionCookie(cookie string) error
+	GetUserSessionByCookie(cookie string) (*UserSession, error)
+	NewUserSessionCookie(session *UserSession) error
+	DeleteUserSessionCookie(cookie string) error
+	GetAccountSessionByCookie(cookie string) (*AccountSession, error)
+	NewAccountSessionCookie(session *AccountSession) error
+	DeleteAccountSessionCookie(cookie string) error
 }
 
 type SessionUsecase interface {
-	Login(session LoginCredentials) (*Session, error)
-	Logout(session Session) error
-	GetSessionByCookie(cookie string) (*Session, error)
+	Login(session LoginCredentials) (*UserSession, *AccountSession, error)
+	Logout(session UserSession) error
+	GetUserSessionByCookie(cookie string) (*UserSession, error)
+	GetAccountSessionByCookie(cookie string) (*AccountSession, error)
 }

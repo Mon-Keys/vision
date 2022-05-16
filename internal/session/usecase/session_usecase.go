@@ -8,33 +8,56 @@ import (
 type sessionUsecase struct {
 	sessionRepository domain.SessionRepository
 	userRepository    domain.UserRepository
+	accountRepository domain.AccountRepository
 }
 
-func NewSessionUsecase(r domain.SessionRepository, ur domain.UserRepository) domain.SessionUsecase {
+func NewSessionUsecase(r domain.SessionRepository, ur domain.UserRepository, ar domain.AccountRepository) domain.SessionUsecase {
 	return &sessionUsecase{
 		sessionRepository: r,
 		userRepository:    ur,
+		accountRepository: ar,
 	}
 }
 
-func (su sessionUsecase) Login(session domain.LoginCredentials) (*domain.Session, error) {
+func (su sessionUsecase) Login(session domain.LoginCredentials) (*domain.UserSession, *domain.AccountSession, error) {
 	// su.sessionRepository.NewSessionCookie()
 	userData, err := su.userRepository.Find(session.Email)
 	if err != nil {
-		return nil, domain.ErrorCantFindUserWithEmail
+		return nil, nil, domain.ErrorCantFindUserWithEmail
 	}
+
+	accountData, err := su.accountRepository.FindAccountByUserID(int(userData.ID))
+
 	if userData.Password != session.Password {
-		return nil, domain.ErrorWrongPassword
+		return nil, nil, domain.ErrorWrongPassword
 	}
 
-	userSession := cookie.CreateAuthSessionUUID(string(userData.ID))
+	accountSession := cookie.CreateAccountSessionUUID(accountData.ID)
+	su.sessionRepository.NewAccountSessionCookie(accountSession)
 
-	return userSession, nil
+	userSession := cookie.CreateAuthSessionUUID(userData.ID)
+	su.sessionRepository.NewUserSessionCookie(userSession)
+
+	return userSession, accountSession, nil
 }
-func (su sessionUsecase) Logout(session domain.Session) error {
+func (su sessionUsecase) Logout(session domain.UserSession) error {
 	return nil
 }
 
-func (su sessionUsecase) GetSessionByCookie(cookie string) (*domain.Session, error) {
-	return nil, nil
+func (su sessionUsecase) GetUserSessionByCookie(cookie string) (*domain.UserSession, error) {
+	session := new(domain.UserSession)
+	session, err := su.sessionRepository.GetUserSessionByCookie(cookie)
+	if err != nil {
+		return nil, err
+	}
+	return session, nil
+}
+
+func (su sessionUsecase) GetAccountSessionByCookie(cookie string) (*domain.AccountSession, error) {
+	session := new(domain.AccountSession)
+	session, err := su.sessionRepository.GetAccountSessionByCookie(cookie)
+	if err != nil {
+		return nil, err
+	}
+	return session, nil
 }

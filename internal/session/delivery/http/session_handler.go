@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/fasthttp/router"
 	"github.com/perlinleo/vision/internal/domain"
@@ -20,8 +19,8 @@ func NewSessionHandler(router *router.Router, usecase domain.SessionUsecase) {
 		SessionUsecase: usecase,
 	}
 
-	router.POST("/api/v1/auth", middleware.Cors(middleware.ReponseMiddlwareAndLogger(handler.Login)))
-	router.DELETE("/api/v1/auth", middleware.Cors(middleware.ReponseMiddlwareAndLogger(handler.Logout)))
+	router.POST("/api/v1/auth", middleware.Cors(middleware.Auth(middleware.ReponseMiddlwareAndLogger(handler.Login), handler.SessionUsecase)))
+	router.DELETE("/api/v1/auth", middleware.Cors(middleware.Auth(middleware.ReponseMiddlwareAndLogger(handler.Logout), handler.SessionUsecase)))
 	router.OPTIONS("/api/v1/auth", middleware.Cors(middleware.ReponseMiddlwareAndLogger(handler.Login)))
 }
 
@@ -33,26 +32,20 @@ func (h *sessionHandler) Login(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	session, err := h.SessionUsecase.Login(*loginCredentials)
+	userSession, accountSession, err := h.SessionUsecase.Login(*loginCredentials)
 
 	if err != nil {
 		ctx.SetStatusCode(fasthttp.StatusForbidden)
 		return
 	}
 
-	cookie := cookie.CreateFastHTTPCookie(*session)
-	// ctx.Response.Header.Cookie()
+	cookieUser := cookie.CreateFastHTTPCookie(userSession.Cookie, "UID")
 
-	// set := ctx.Response.Header.Cookie(&cookie)
+	cookieAccount := cookie.CreateFastHTTPCookie(accountSession.Cookie, "AID")
 
-	ctx.Response.Header.Add("Set-Cookie", cookie.String())
-	fmt.Println(cookie.String())
-	// ctx.Response.Header.Set("Set-Cookie", "value")
-	// ctx.Response.Header.Add("Set-Cookie", "<NAME>=<JOPA>")
-	// fmt.Printf(string(set))
-	// if set {
-	// 	return
-	// }
+	ctx.Response.Header.Add("Set-Cookie", cookieUser.String())
+	ctx.Response.Header.Add("Set-Cookie", cookieAccount.String())
+	// fmt.Println(cookie.String())
 }
 
 func (h *sessionHandler) Logout(ctx *fasthttp.RequestCtx) {

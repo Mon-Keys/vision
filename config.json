@@ -14,10 +14,15 @@
         "name": "vision"
     },
     "host": "localhost",
-    "redis": {
+    "redis-user": {
         "port": "6379",
-        "password": "",
+        "password": "sOmE_sEcUrE_pAsS",
         "DB": 0
+    },
+    "redis-account": {
+        "port": "6379",
+        "password": "sOmE_sEcUrE_pAsS",
+        "DB": 1
     }
 
 }

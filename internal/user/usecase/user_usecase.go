@@ -14,6 +14,21 @@ func NewUserUsecase(r domain.UserRepository, ar domain.AccountRepository) domain
 	}
 }
 
+func (u userUsecase) FindUserAccountByID(userID int32) (*domain.User, *domain.Account, error) {
+	user, err := u.userRepository.FindUserByID(userID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	account, err := u.accountRepository.FindAccountByUserID(int(userID))
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return user, account, nil
+}
+
 func (u userUsecase) SignUpUser(user *domain.NewUserWithoutAccount) error {
 	newUser := new(domain.NewUser)
 	newUser.Email = user.Email
@@ -39,6 +54,24 @@ func (u userUsecase) SignUpUser(user *domain.NewUserWithoutAccount) error {
 	}
 
 	return nil
+}
+
+func (u userUsecase) All() ([]domain.UserAccountFull, error) {
+	users, err := u.userRepository.All()
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (u userUsecase) FindAllByName(name string) ([]domain.UserAccountFull, error) {
+	users, err := u.userRepository.FindAllByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (u userUsecase) DuplicateUser(user *domain.User) ([]domain.User, error) {

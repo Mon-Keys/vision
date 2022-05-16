@@ -40,7 +40,16 @@ func Start() error {
 	}
 	log.Printf("PSQL Database connection success on %s", config.App.DatabaseURL)
 
-	RedisClient, err := NewRedisDataBase(config.RedisDB.addr, config.RedisDB.password, config.RedisDB.db)
+	RedisClientUser, err := NewRedisDataBase(
+		config.RedisUser.addr,
+		config.RedisUser.password,
+		config.RedisUser.db)
+
+	RedisClientAccount, err := NewRedisDataBase(
+		config.RedisAccount.addr,
+		config.RedisAccount.password,
+		config.RedisAccount.db)
+
 	if err != nil {
 		return err
 	}
@@ -57,13 +66,13 @@ func Start() error {
 	userCache := cache.New(5*time.Minute, 10*time.Minute)
 	userRepository := user_psql.NewUserPSQLRepository(PSQLConnPool, userCache)
 	userUsecase := user_usecase.NewUserUsecase(userRepository, accountRepository)
-	user_http.NewUserHandler(router, userUsecase)
 
 	//auth
 	authCache := cache.New(5*time.Minute, 10*time.Minute)
-	authRepository := session_redis.NewSessionRedisRepository(&RedisClient, authCache)
-	authUsecase := session_usecase.NewSessionUsecase(authRepository, userRepository)
+	authRepository := session_redis.NewSessionRedisRepository(&RedisClientUser, &RedisClientAccount, authCache)
+	authUsecase := session_usecase.NewSessionUsecase(authRepository, userRepository, accountRepository)
 	session_http.NewSessionHandler(router, authUsecase)
+	user_http.NewUserHandler(router, userUsecase, authUsecase)
 
 	// status
 	statusCache := cache.New(5*time.Minute, 10*time.Minute)
@@ -74,6 +83,7 @@ func Start() error {
 	log.Printf("STARTING SERVICE ON PORT %s\n", config.App.Port)
 
 	err = fasthttp.ListenAndServe(config.App.Port, router.Handler)
+	// err = fasthttp.ListenAndServeTLS(config.App.Port, "cert.pem", "key.pem", router.Handler)
 	if err != nil {
 		return err
 	}

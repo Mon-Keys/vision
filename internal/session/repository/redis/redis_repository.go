@@ -2,6 +2,8 @@ package redis
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/patrickmn/go-cache"
@@ -11,33 +13,61 @@ import (
 var ctx = context.Background()
 
 type sessionRedis struct {
-	rdb   *redis.Client
-	Cache *cache.Cache
+	rdbUser    *redis.Client
+	rdbAccount *redis.Client
+	Cache      *cache.Cache
 }
 
-func NewSessionRedisRepository(rc *redis.Client, Cache *cache.Cache) domain.SessionRepository {
+func NewSessionRedisRepository(rcUser *redis.Client, rcAccount *redis.Client, Cache *cache.Cache) domain.SessionRepository {
 	return &sessionRedis{
-		rc,
+		rcUser,
+		rcAccount,
 		Cache,
 	}
 }
 
-func (rr sessionRedis) GetSessionByCookie(cookie string) (*domain.Session, error) {
-	id, err := rr.rdb.Get(ctx, cookie).Result()
+func (rr sessionRedis) GetUserSessionByCookie(cookie string) (*domain.UserSession, error) {
+	id, err := rr.rdbUser.Get(ctx, cookie).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	result := &domain.Session{
+	fmt.Println(id)
+
+	decodedID, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, err
+	}
+	result := &domain.UserSession{
 		Cookie: cookie,
-		ID:     id,
+		UserID: int32(decodedID),
 	}
 
 	return result, nil
 }
 
-func (rr sessionRedis) NewSessionCookie(session *domain.Session) error {
-	err := rr.rdb.Set(ctx, session.Cookie, session.ID, 0).Err()
+func (rr sessionRedis) GetAccountSessionByCookie(cookie string) (*domain.AccountSession, error) {
+	id, err := rr.rdbUser.Get(ctx, cookie).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(id)
+
+	decodedID, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, err
+	}
+	result := &domain.AccountSession{
+		Cookie:    cookie,
+		AccountID: int32(decodedID),
+	}
+
+	return result, nil
+}
+
+func (rr sessionRedis) NewUserSessionCookie(session *domain.UserSession) error {
+	err := rr.rdbUser.Set(ctx, session.Cookie, session.UserID, 0).Err()
 
 	if err != nil {
 		return err
@@ -45,8 +75,26 @@ func (rr sessionRedis) NewSessionCookie(session *domain.Session) error {
 	return nil
 }
 
-func (rr sessionRedis) DeleteSessionCookie(cookie string) error {
-	err := rr.rdb.Del(ctx, cookie).Err()
+func (rr sessionRedis) NewAccountSessionCookie(session *domain.AccountSession) error {
+	err := rr.rdbUser.Set(ctx, session.Cookie, session.AccountID, 0).Err()
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (rr sessionRedis) DeleteUserSessionCookie(cookie string) error {
+	err := rr.rdbUser.Del(ctx, cookie).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rr sessionRedis) DeleteAccountSessionCookie(cookie string) error {
+	err := rr.rdbAccount.Del(ctx, cookie).Err()
 	if err != nil {
 		return err
 	}

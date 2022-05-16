@@ -12,28 +12,40 @@ import (
 const CookieDefaultMaxAge = 3600000
 
 // TO CONFIG
-const WebSiteURL = "localhost:5000"
+const WebSiteURL = "http://localhost:5000"
 
-func CreateAuthSessionUUID(userID string) *domain.Session {
-	session := new(domain.Session)
+func CreateAuthSessionUUID(userID int32) *domain.UserSession {
+	session := new(domain.UserSession)
 
-	session.ID = userID
+	session.UserID = userID
 	session.Expiration = CookieDefaultMaxAge
 	session.Cookie = uuid.New().String()
 
 	return session
 }
 
-func CreateFastHTTPCookie(s domain.Session) fasthttp.Cookie {
+func CreateAccountSessionUUID(userID int32) *domain.AccountSession {
+	session := new(domain.AccountSession)
+
+	session.AccountID = userID
+	session.Expiration = CookieDefaultMaxAge
+	session.Cookie = uuid.New().String()
+
+	return session
+}
+
+func CreateFastHTTPCookie(cookie string, name string) fasthttp.Cookie {
 	cook := fasthttp.Cookie{}
-	cook.SetKey("sessionid")
-	cook.SetValue(s.Cookie)
-	cook.SetMaxAge(int(s.Expiration))
-	cook.SetDomain(WebSiteURL)
-	cook.SetPath(("/"))
+	cook.SetExpire(time.Now().Add(360 * time.Hour))
+	cook.SetKey(name)
+	cook.SetValue(cookie)
+	// cook.SetMaxAge(int(s.Expiration))
+	// cook.SetDomain(WebSiteURL)
+	cook.SetPath(("/api/v1"))
 	cook.SetHTTPOnly(true)
-	cook.SetExpire(time.Now().Add(10 * time.Minute))
-	cook.SetSecure(false)
+	cook.SetSecure(true)
+	// cook.SetSecure(false)
+	cook.SetSameSite(fasthttp.CookieSameSiteNoneMode)
 
 	return cook
 }

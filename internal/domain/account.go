@@ -16,6 +16,7 @@ type Account struct {
 type AccountRepository interface {
 	CreateAccount(na *NewAccount) error
 	Find(fn string) ([]Account, error)
+	FindAccountByUserID(userID int) (*Account, error)
 }
 
 type AccountUsecase interface {

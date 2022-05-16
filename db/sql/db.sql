@@ -70,7 +70,8 @@ CREATE UNLOGGED TABLE IF NOT EXISTS pass (
     pass_expiration_date timestamptz NOT NULL,
     pass_issue_date timestamptz DEFAULT now() NOT NULL,
     pass_name varchar(256) NOT NULL,
-    pass_secure_data varchar(1024) NOT NULL
+    pass_secure_data varchar(1024) NOT NULL,
+    pass_active boolean NOT NULL DEFAULT false
 );
 
 -- passage
@@ -85,44 +86,37 @@ CREATE UNLOGGED TABLE IF NOT EXISTS passage (
     passage_datetime timestamptz DEFAULT now()
 );
 
--- event type
-DROP TABLE IF EXISTS event_type;
-
-CREATE UNLOGGED TABLE IF NOT EXISTS event_type (
-    event_type_id serial NOT NULL PRIMARY KEY,
-    event_type_name varchar(256) NOT NULL
-);
-
--- pass_declaration
-DROP TABLE IF EXISTS pass_declaration;
-
-CREATE UNLOGGED TABLE IF NOT EXISTS pass_declaration (
-    pass_declaration_id serial NOT NULL PRIMARY KEY,
-    pass_declaration_name citext NOT NULL
-);
-
--- declaration events
-DROP TABLE IF EXISTS declaration_events;
-
-CREATE UNLOGGED TABLE IF NOT EXISTS declaration_events (
-    declaration_events_id serial NOT NULL PRIMARY KEY,
-    declaration_events_event_type_id int REFERENCES event_type (event_type_id),
-    declaration_pass_declaration_id int REFERENCES pass_declaration (pass_declaration_id),
-    pass_declaration_creator_id int REFERENCES account (account_id),
-    pass_declaration_create_date timestamptz DEFAULT now(),
-    pass_declaration_comment citext,
-    pass_declaration_requests_count smallint NOT NULL CHECK (pass_declaration_requests_count > 0)
-);
-
 -- pass request
 DROP TABLE IF EXISTS pass_request;
 
 CREATE UNLOGGED TABLE IF NOT EXISTS pass_request (
     pass_request_id serial NOT NULL PRIMARY KEY,
     pass_request_account_id int REFERENCES account (account_id),
-    pass_request_declaration_id int REFERENCES pass_declaration (pass_declaration_id),
+    pass_request_declaration_id int REFERENCES pass (pass_id),
     pass_request_approved boolean NOT NULL,
     pass_request_comment citext
+);
+
+-- role request
+DROP TABLE IF EXISTS role_request;
+
+CREATE UNLOGGED TABLE IF NOT EXISTS role_request (
+    role_request_id serial NOT NULL PRIMARY KEY,
+    role_request_account_id int REFERENCES account (account_id),
+    role_request_watnted_role_id int REFERENCES roles (role_id),
+    role_request_approved boolean NOT NULL,
+    role_request_comment citext
+);
+
+-- time request
+DROP TABLE IF EXISTS time_request;
+
+CREATE UNLOGGED TABLE IF NOT EXISTS time_request (
+    time_request_id serial NOT NULL PRIMARY KEY,
+    time_request_account_id int REFERENCES account (account_id),
+    time_request_pass_id int REFERENCES pass (pass_id),
+    time_request_approved boolean NOT NULL,
+    time_request_comment citext
 );
 
 INSERT INTO roles ( role_name , role_access_level ) 

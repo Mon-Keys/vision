@@ -28,9 +28,10 @@ type AppConfig struct {
 }
 
 type Config struct {
-	App     *AppConfig
-	PSQLDB  *DataBaseConfig
-	RedisDB *RedisConfig
+	App          *AppConfig
+	PSQLDB       *DataBaseConfig
+	RedisUser    *RedisConfig
+	RedisAccount *RedisConfig
 }
 
 func NewConfig() *Config {
@@ -56,20 +57,33 @@ func NewConfig() *Config {
 	// PORT
 	appPort := viper.GetString(`server.address`)
 
-	// Redis
+	// Redis-user
 
-	redisHost := viper.GetString(`redis.host`)
-	redisPassword := viper.GetString(`redis.password`)
-	redisDB := viper.GetInt(`redis.DB`)
-	redisPort := viper.GetString(`redis.port`)
+	redisUserHost := viper.GetString(`redis-user.host`)
+	redisUserPassword := viper.GetString(`redis-user.password`)
+	redisUserDB := viper.GetInt(`redis-user.DB`)
+	redisUserPort := viper.GetString(`redis-user.port`)
+	redisUserAddr := fmt.Sprintf("%s:%s", redisUserHost, redisUserPort)
 
-	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
+	// Redis-account
+
+	redisAccountHost := viper.GetString(`redis-account.host`)
+	redisAccountPassword := viper.GetString(`redis-account.password`)
+	redisAccountDB := viper.GetInt(`redis-account.DB`)
+	redisAccountPort := viper.GetString(`redis-account.port`)
+
+	redisAccountAddr := fmt.Sprintf("%s:%s", redisAccountHost, redisAccountPort)
 
 	return &Config{
-		RedisDB: &RedisConfig{
-			addr:     redisAddr,
-			password: redisPassword,
-			db:       redisDB,
+		RedisUser: &RedisConfig{
+			addr:     redisUserAddr,
+			password: redisUserPassword,
+			db:       redisUserDB,
+		},
+		RedisAccount: &RedisConfig{
+			addr:     redisAccountAddr,
+			password: redisAccountPassword,
+			db:       redisAccountDB,
 		},
 		PSQLDB: &DataBaseConfig{
 			host: dbHost,
