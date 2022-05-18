@@ -12,7 +12,7 @@ import (
 const CookieDefaultMaxAge = 3600000
 
 // TO CONFIG
-const WebSiteURL = "http://localhost:5000"
+const WebSiteURL = "http://vision.leonidperl.in:5000"
 
 func CreateAuthSessionUUID(userID int32) *domain.UserSession {
 	session := new(domain.UserSession)
