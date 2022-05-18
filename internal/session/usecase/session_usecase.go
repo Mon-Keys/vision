@@ -40,7 +40,16 @@ func (su sessionUsecase) Login(session domain.LoginCredentials) (*domain.UserSes
 
 	return userSession, accountSession, nil
 }
-func (su sessionUsecase) Logout(session domain.UserSession) error {
+
+func (su sessionUsecase) Logout(accountCookie string, userCookie string) error {
+	err := su.sessionRepository.DeleteAccountSessionCookie(accountCookie)
+	if err != nil {
+		return err
+	}
+	err = su.sessionRepository.DeleteUserSessionCookie(userCookie)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

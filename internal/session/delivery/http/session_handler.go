@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/fasthttp/router"
 	"github.com/perlinleo/vision/internal/domain"
@@ -49,5 +50,11 @@ func (h *sessionHandler) Login(ctx *fasthttp.RequestCtx) {
 }
 
 func (h *sessionHandler) Logout(ctx *fasthttp.RequestCtx) {
-
+	uid := ctx.UserValue("UID").(*domain.UserSession)
+	aid := ctx.UserValue("AID").(*domain.UserSession)
+	fmt.Println(uid.Cookie, aid.Cookie)
+	err := h.SessionUsecase.Logout(aid.Cookie, uid.Cookie)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
+	}
 }

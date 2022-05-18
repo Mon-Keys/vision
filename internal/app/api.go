@@ -15,7 +15,14 @@ import (
 	user_psql "github.com/perlinleo/vision/internal/user/repository/psql"
 	user_usecase "github.com/perlinleo/vision/internal/user/usecase"
 
+	declaration_http "github.com/perlinleo/vision/internal/declaration/delivery/http"
+	declaration_psql "github.com/perlinleo/vision/internal/declaration/repository/psql"
+	declaration_usecase "github.com/perlinleo/vision/internal/declaration/usecase"
+
 	account_psql "github.com/perlinleo/vision/internal/account/repository/psql"
+	pass_http "github.com/perlinleo/vision/internal/pass/delivery/http"
+	pass_psql "github.com/perlinleo/vision/internal/pass/repository/psql"
+	pass_usecase "github.com/perlinleo/vision/internal/pass/usecase"
 
 	status_http "github.com/perlinleo/vision/internal/status/delivery/http"
 	status_psql "github.com/perlinleo/vision/internal/status/repository/psql"
@@ -58,6 +65,16 @@ func Start() error {
 
 	router := router.New()
 
+	// pass
+	passCache := cache.New(5*time.Minute, 10*time.Minute)
+	passRepository := pass_psql.NewPassPSQLRepository(PSQLConnPool, passCache)
+	passUsecase := pass_usecase.NewPassUsecase(passRepository)
+
+	//declaration
+	declarationCache := cache.New(5*time.Minute, 10*time.Minute)
+	declarationRepository := declaration_psql.NewDeclarationPSQLRepository(PSQLConnPool, declarationCache)
+	declarationUsecase := declaration_usecase.NewDeclarationUsecase(declarationRepository, passRepository)
+
 	// account
 	accountCache := cache.New(5*time.Minute, 10*time.Minute)
 	accountRepository := account_psql.NewAccountPSQLRepository(PSQLConnPool, accountCache)
@@ -71,8 +88,12 @@ func Start() error {
 	authCache := cache.New(5*time.Minute, 10*time.Minute)
 	authRepository := session_redis.NewSessionRedisRepository(&RedisClientUser, &RedisClientAccount, authCache)
 	authUsecase := session_usecase.NewSessionUsecase(authRepository, userRepository, accountRepository)
+
+	//declaration
+	declaration_http.NewDeclarationHandler(router, declarationUsecase, userUsecase, authUsecase)
 	session_http.NewSessionHandler(router, authUsecase)
 	user_http.NewUserHandler(router, userUsecase, authUsecase)
+	pass_http.NewPassesHandler(router, passUsecase, userUsecase, authUsecase)
 
 	// status
 	statusCache := cache.New(5*time.Minute, 10*time.Minute)

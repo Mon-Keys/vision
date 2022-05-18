@@ -71,7 +71,8 @@ CREATE UNLOGGED TABLE IF NOT EXISTS pass (
     pass_issue_date timestamptz DEFAULT now() NOT NULL,
     pass_name varchar(256) NOT NULL,
     pass_secure_data varchar(1024) NOT NULL,
-    pass_active boolean NOT NULL DEFAULT false
+    pass_active boolean NOT NULL DEFAULT false,
+    pass_disabled boolean NOT NULL default false
 );
 
 -- passage
@@ -92,8 +93,10 @@ DROP TABLE IF EXISTS pass_request;
 CREATE UNLOGGED TABLE IF NOT EXISTS pass_request (
     pass_request_id serial NOT NULL PRIMARY KEY,
     pass_request_account_id int REFERENCES account (account_id),
-    pass_request_declaration_id int REFERENCES pass (pass_id),
+    pass_request_pass_id int REFERENCES pass (pass_id),
     pass_request_approved boolean NOT NULL,
+    pass_request_denied boolean NOT NULL DEFAULT false,
+    pass_request_created timestamptz DEFAULT now() NOT NULL,
     pass_request_comment citext
 );
 
@@ -103,8 +106,10 @@ DROP TABLE IF EXISTS role_request;
 CREATE UNLOGGED TABLE IF NOT EXISTS role_request (
     role_request_id serial NOT NULL PRIMARY KEY,
     role_request_account_id int REFERENCES account (account_id),
-    role_request_watnted_role_id int REFERENCES roles (role_id),
+    role_request_wanted_role_id int REFERENCES roles (role_id),
     role_request_approved boolean NOT NULL,
+    role_request_denied boolean NOT NULL DEFAULT false,
+    role_request_created timestamptz DEFAULT now() NOT NULL,
     role_request_comment citext
 );
 
@@ -116,6 +121,8 @@ CREATE UNLOGGED TABLE IF NOT EXISTS time_request (
     time_request_account_id int REFERENCES account (account_id),
     time_request_pass_id int REFERENCES pass (pass_id),
     time_request_approved boolean NOT NULL,
+    time_request_denied boolean NOT NULL DEFAULT false,
+    time_request_created timestamptz DEFAULT now() NOT NULL,
     time_request_comment citext
 );
 

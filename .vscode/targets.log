@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon May 16 13:05:22 2022
+# Make data base, printed on Tue May 17 15:56:49 2022
 
 # Variables
 
@@ -59,7 +59,7 @@ GOPATH = /home/pierrelean/go
 # environment
 VSCODE_LOG_STACK = false
 # environment
-VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-05c2b160-d4d4-447e-ab1b-7b5612494b0a.sock
+VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-2b1ad434-f33d-40bc-ad32-feb80c448399.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -87,7 +87,7 @@ HOME = /home/pierrelean
 # environment
 LOGNAME = pierrelean
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -243,6 +243,6 @@ clean-docker:
 # strcache performance: lookups = 38 / hit rate = 23%
 # hash-table stats:
 # Load=29/8192=0%, Rehash=0, Collisions=1/38=3%
-# Finished Make data base on Mon May 16 13:05:22 2022
+# Finished Make data base on Tue May 17 15:56:49 2022
 
  

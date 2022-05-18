@@ -28,7 +28,7 @@ type SessionRepository interface {
 
 type SessionUsecase interface {
 	Login(session LoginCredentials) (*UserSession, *AccountSession, error)
-	Logout(session UserSession) error
+	Logout(accountCookie string, userCookie string) error
 	GetUserSessionByCookie(cookie string) (*UserSession, error)
 	GetAccountSessionByCookie(cookie string) (*AccountSession, error)
 }
