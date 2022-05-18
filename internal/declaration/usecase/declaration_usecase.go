@@ -30,7 +30,7 @@ func (u declarationUsecase) CreatePassDeclaration(declaration domain.AskPass, us
 	newInactivePass.DynamicQR = true
 	newInactivePass.ExpirationDate = declaration.PassExpirationDate
 	newInactivePass.Name = declaration.PassName
-	newInactivePass.SecureData = secure_data_generator.RandStringBytesMaskImprSrcSB(1024)
+	newInactivePass.SecureData = secure_data_generator.RandStringBytesMaskImprSrcSB(16)
 	newInactivePass.IssueDate = time.Now()
 	newInactivePass.Active = false
 	err, newPassID := u.passRepostiory.CreatePass(*newInactivePass)

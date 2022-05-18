@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/fasthttp/router"
 	"github.com/perlinleo/vision/internal/domain"
@@ -25,6 +26,8 @@ func NewPassesHandler(router *router.Router, usecase domain.PassUsecase, user do
 			middleware.Auth(
 				middleware.ReponseMiddlwareAndLogger(handler.Passes), su))))
 
+	router.GET("/api/v1/check/{data}", middleware.ReponseMiddlwareAndLogger(handler.Check))
+
 }
 
 func (h *passHandler) Passes(ctx *fasthttp.RequestCtx) {
@@ -39,5 +42,18 @@ func (h *passHandler) Passes(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 	}
 
+	ctx.SetBody(ctxBody)
+}
+
+func (h *passHandler) Check(ctx *fasthttp.RequestCtx) {
+	data := ctx.UserValue("data").(string)
+	checkResult, err := h.PassUsecase.CheckPass(data)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	ctxBody, err := json.Marshal(checkResult)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
 	ctx.SetBody(ctxBody)
 }

@@ -1,6 +1,4 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
-
 # GNU Make 4.2.1
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2016 Free Software Foundation, Inc.
@@ -8,7 +6,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue May 17 15:56:49 2022
+# Make data base, printed on Wed May 18 13:24:54 2022
 
 # Variables
 
@@ -59,7 +57,7 @@ GOPATH = /home/pierrelean/go
 # environment
 VSCODE_LOG_STACK = false
 # environment
-VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-2b1ad434-f33d-40bc-ad32-feb80c448399.sock
+VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-62cc9b47-01ae-4014-b73a-bd550d36562f.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -87,7 +85,7 @@ HOME = /home/pierrelean
 # environment
 LOGNAME = pierrelean
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -111,7 +109,7 @@ NAME = Code
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # environment
-VSCODE_WSL_EXT_LOCATION = /mnt/c/Users/perli/.vscode/extensions/ms-vscode-remote.remote-wsl-0.66.2
+VSCODE_WSL_EXT_LOCATION = /mnt/c/Users/perli/.vscode/extensions/ms-vscode-remote.remote-wsl-0.66.3
 # default
 MAKE_COMMAND := make
 # default
@@ -243,6 +241,8 @@ clean-docker:
 # strcache performance: lookups = 38 / hit rate = 23%
 # hash-table stats:
 # Load=29/8192=0%, Rehash=0, Collisions=1/38=3%
-# Finished Make data base on Tue May 17 15:56:49 2022
+# Finished Make data base on Wed May 18 13:24:54 2022
 
  
+make: *** No rule to make target 'all'.  Stop.
+

@@ -18,6 +18,26 @@ func NewPassPSQLRepository(ConnectionPool *pgx.ConnPool, Cache *cache.Cache) dom
 	}
 }
 
+func (p passPsql) CheckPassByData(data string) (*domain.CheckResult, error) {
+	checkRes := new(domain.CheckResult)
+
+	query := `
+	select pass_id, pass_expiration_date, pass_issue_date, 
+	account_role_id, pass_name, user_email, user_created_date, 
+	account_fullname from pass join account ON account.account_id=pass.pass_account_id 
+	join users u on account.account_user_id = u.user_id 
+	where pass_secure_data=$1;
+	`
+
+	err := p.Conn.QueryRow(query, data).Scan(&checkRes.PassID,
+		&checkRes.ExpirationDate, &checkRes.IssueDate, &checkRes.UserRoleID,
+		&checkRes.PassName, &checkRes.UserEmail, &checkRes.UserCreated, &checkRes.UserName)
+	if err != nil {
+		return nil, err
+	}
+	return checkRes, nil
+}
+
 func (p passPsql) PassesByAccountID(accountID int32) ([]domain.Pass, error) {
 	var passes []domain.Pass
 
