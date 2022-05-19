@@ -31,6 +31,11 @@ func (p passUsecase) CheckPass(data string) (*domain.CheckResult, error) {
 		return checkRes, err
 	}
 	checkRes.Access = true
+	passage := new(domain.AddPassage)
+	passage.Exit = false
+	passage.PassID = checkRes.PassID
+	passage.Status = 1
+	err = p.passRepostiory.AddPassage(*passage)
 	return checkRes, nil
 }
 
@@ -50,4 +55,8 @@ func (p passUsecase) GetUserPasses(accountID int32) ([]domain.Pass, error) {
 		return nil, err
 	}
 	return passes, nil
+}
+
+func (p passUsecase) AllPassages() ([]domain.Passage, error) {
+	return p.passRepostiory.AllPassages()
 }

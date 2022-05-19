@@ -18,6 +18,19 @@ func NewAccountPSQLRepository(ConnectionPool *pgx.ConnPool, Cache *cache.Cache) 
 	}
 }
 
+func (ap *accountPsql) ChangeUserRole(userID int, newRoleID int) error {
+	query := `UPDATE account
+				SET account_role_id = $1
+				WHERE account_id = $2 returning account_id
+	`
+	var passIDCheck int32
+	err := ap.Conn.QueryRow(query, newRoleID, userID).Scan(&passIDCheck)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Создает аккаунт пользователя в базе данных PostgreSQL
 func (ap *accountPsql) CreateAccount(na *domain.NewAccount) error {
 	query := "INSERT INTO account (account_role_id, account_user_id, account_fullname) " +

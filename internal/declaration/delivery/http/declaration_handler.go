@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/fasthttp/router"
 	"github.com/perlinleo/vision/internal/domain"
@@ -41,6 +42,21 @@ func NewDeclarationHandler(router *router.Router, usecase domain.DeclarationUsec
 		middleware.ReponseMiddlwareAndLogger(
 			middleware.Auth(
 				middleware.ReponseMiddlwareAndLogger(handler.AskRole), su))))
+
+	router.GET("/api/v1/declarations/role/{id}", middleware.Cors(
+		middleware.ReponseMiddlwareAndLogger(
+			middleware.Auth(
+				middleware.ReponseMiddlwareAndLogger(handler.RoleID), su))))
+
+	router.GET("/api/v1/declarations/pass/{id}", middleware.Cors(
+		middleware.ReponseMiddlwareAndLogger(
+			middleware.Auth(
+				middleware.ReponseMiddlwareAndLogger(handler.PassID), su))))
+
+	router.GET("/api/v1/declarations/time/{id}", middleware.Cors(
+		middleware.ReponseMiddlwareAndLogger(
+			middleware.Auth(
+				middleware.ReponseMiddlwareAndLogger(handler.TimeID), su))))
 
 	router.POST("/api/v1/declarations/deny", middleware.Cors(
 		middleware.ReponseMiddlwareAndLogger(
@@ -138,8 +154,98 @@ func (h *declarationHandler) Declarations(ctx *fasthttp.RequestCtx) {
 	ctx.SetBody(ctxBody)
 }
 
-func (h *declarationHandler) AskTime(ctx *fasthttp.RequestCtx) {
+func (h *declarationHandler) TimeID(ctx *fasthttp.RequestCtx) {
+	idString := ctx.UserValue("id").(string)
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
 
+	passdecpass := new(domain.AskTimeDeclarationPass)
+
+	declaration, pass, err := h.DeclarationUsecase.TimeDeclarationByID(int32(id))
+
+	passdecpass.Declaration = *declaration
+	passdecpass.Pass = *pass
+
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+	ctxBody, err := json.Marshal(passdecpass)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+	ctx.SetBody(ctxBody)
+}
+
+func (h *declarationHandler) PassID(ctx *fasthttp.RequestCtx) {
+	idString := ctx.UserValue("id").(string)
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+
+	passdecpass := new(domain.AskPassDeclarationPass)
+
+	declaration, pass, err := h.DeclarationUsecase.PassDeclarationByID(int32(id))
+
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	passdecpass.Declaration = *declaration
+	passdecpass.Pass = *pass
+
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+	ctxBody, err := json.Marshal(passdecpass)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+	ctx.SetBody(ctxBody)
+}
+
+func (h *declarationHandler) RoleID(ctx *fasthttp.RequestCtx) {
+	idString := ctx.UserValue("id").(string)
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+
+	declaration, err := h.DeclarationUsecase.RoleDeclarationByID(int32(id))
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	ctxBody, err := json.Marshal(declaration)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	ctx.SetBody(ctxBody)
+}
+
+func (h *declarationHandler) AskTime(ctx *fasthttp.RequestCtx) {
+	askTime := new(domain.AskTime)
+	aid := ctx.UserValue("AID").(*domain.UserSession)
+
+	err := json.Unmarshal(ctx.PostBody(), &askTime)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+
+	askTimeDeclaration := new(domain.AskTimeDeclaration)
+	askTimeDeclaration.CreatorID = aid.UserID
+	askTimeDeclaration.Comment = askTime.Comment
+	askTimeDeclaration.PassID = askTime.PassID
+	askTimeDeclaration.TimeExtended = askTime.TimeExtended
+
+	err = h.DeclarationUsecase.CreateTimeDeclaration(*askTimeDeclaration)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusConflict)
+	}
 }
 
 func (h *declarationHandler) AskPass(ctx *fasthttp.RequestCtx) {

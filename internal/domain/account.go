@@ -17,6 +17,7 @@ type AccountRepository interface {
 	CreateAccount(na *NewAccount) error
 	Find(fn string) ([]Account, error)
 	FindAccountByUserID(userID int) (*Account, error)
+	ChangeUserRole(userID int, newRoleID int) error
 }
 
 type AccountUsecase interface {

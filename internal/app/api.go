@@ -73,11 +73,11 @@ func Start() error {
 	//declaration
 	declarationCache := cache.New(5*time.Minute, 10*time.Minute)
 	declarationRepository := declaration_psql.NewDeclarationPSQLRepository(PSQLConnPool, declarationCache)
-	declarationUsecase := declaration_usecase.NewDeclarationUsecase(declarationRepository, passRepository)
 
 	// account
 	accountCache := cache.New(5*time.Minute, 10*time.Minute)
 	accountRepository := account_psql.NewAccountPSQLRepository(PSQLConnPool, accountCache)
+	declarationUsecase := declaration_usecase.NewDeclarationUsecase(declarationRepository, passRepository, accountRepository)
 
 	// usERR
 	userCache := cache.New(5*time.Minute, 10*time.Minute)

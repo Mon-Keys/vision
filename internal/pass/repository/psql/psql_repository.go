@@ -1,6 +1,8 @@
 package psql
 
 import (
+	"time"
+
 	"github.com/jackc/pgx"
 	"github.com/patrickmn/go-cache"
 	"github.com/perlinleo/vision/internal/domain"
@@ -16,6 +18,53 @@ func NewPassPSQLRepository(ConnectionPool *pgx.ConnPool, Cache *cache.Cache) dom
 		ConnectionPool,
 		Cache,
 	}
+}
+
+func (p passPsql) AddPassage(passage domain.AddPassage) error {
+	query := `
+	insert into passage(pass_id, passage_status, is_exit) VALUES
+($1,$2,$3) returning passage_id
+	`
+	var passage_id int32
+	err := p.Conn.QueryRow(query, passage.PassID, passage.Status, passage.Exit).Scan(&passage_id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p passPsql) AllPassages() ([]domain.Passage, error) {
+	var passages []domain.Passage
+
+	query := `
+	select passage_datetime,is_exit,account_fullname from passage join pass p on p.pass_id = passage.pass_id join account a on p.pass_account_id = a.account_id
+	`
+
+	rows, err := p.Conn.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		obj := domain.Passage{}
+		err := rows.Scan(&obj.Time, &obj.Exit, &obj.Fullname)
+		if err != nil {
+			return nil, err
+		}
+		passages = append(passages, obj)
+	}
+	return passages, nil
+}
+func (p passPsql) UpdatePassTime(data time.Time, passID int32) error {
+	query := `UPDATE pass
+				SET pass_expiration_date = $1
+				WHERE pass_id = $2 returning pass_id`
+
+	var passIDCheck int32
+	err := p.Conn.QueryRow(query, data, passID).Scan(&passIDCheck)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p passPsql) CheckPassByData(data string) (*domain.CheckResult, error) {
@@ -88,6 +137,21 @@ func (p passPsql) ActivatePass(passID int32) error {
 		return err
 	}
 	return nil
+}
+
+func (p passPsql) FindPassByID(passID int32) (*domain.Pass, error) {
+	obj := new(domain.Pass)
+
+	query := `select * from pass where pass_id = $1`
+
+	err := p.Conn.QueryRow(query, passID).Scan(&obj.PassID, &obj.AccountID,
+		&obj.DynamicQR, &obj.ExpirationDate, &obj.IssueDate,
+		&obj.Name, &obj.SecureData, &obj.Active, &obj.Disabled)
+	if err != nil {
+		return nil, err
+	}
+
+	return obj, nil
 }
 
 func (p passPsql) DisablePass(passID int32) error {

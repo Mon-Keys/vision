@@ -12,15 +12,48 @@ import (
 type declarationUsecase struct {
 	declarationRepository domain.DeclarationRepository
 	passRepostiory        domain.PassRepository
+	accountRepostiory     domain.AccountRepository
 }
 
-func NewDeclarationUsecase(r domain.DeclarationRepository, p domain.PassRepository) domain.DeclarationUsecase {
+func NewDeclarationUsecase(r domain.DeclarationRepository, p domain.PassRepository, a domain.AccountRepository) domain.DeclarationUsecase {
 	return &declarationUsecase{
 		declarationRepository: r,
 		passRepostiory:        p,
+		accountRepostiory:     a,
 	}
 }
 
+func (u declarationUsecase) RoleDeclarationByID(id int32) (*domain.AskRoleDeclaration, error) {
+	declaration, err := u.declarationRepository.RoleDeclarationByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return declaration, nil
+}
+func (u declarationUsecase) PassDeclarationByID(id int32) (*domain.AskPassDeclaration, *domain.Pass, error) {
+	declaration, err := u.declarationRepository.PassRequestDeclarationByID(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	pass, err := u.passRepostiory.FindPassByID(declaration.NewPassID)
+	if err != nil {
+		return nil, nil, err
+	}
+	return declaration, pass, nil
+
+}
+func (u declarationUsecase) TimeDeclarationByID(id int32) (*domain.AskTimeDeclaration, *domain.Pass, error) {
+	declaration, err := u.declarationRepository.TimeDeclarationByID(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	pass, err := u.passRepostiory.FindPassByID(declaration.PassID)
+	if err != nil {
+		return nil, nil, err
+	}
+	return declaration, pass, nil
+
+}
 func (u declarationUsecase) CreateRoleDeclaration(declaration domain.AskRoleDeclaration) error {
 	return u.declarationRepository.CreateRoleDeclaration(declaration)
 }
@@ -50,7 +83,7 @@ func (u declarationUsecase) CreatePassDeclaration(declaration domain.AskPass, us
 	return nil
 }
 func (u declarationUsecase) CreateTimeDeclaration(declaration domain.AskTimeDeclaration) error {
-	return nil
+	return u.declarationRepository.CreateTimeDeclaration(declaration)
 }
 func (u declarationUsecase) AllDeclarations() ([]domain.DeclarationCommon, error) {
 	declarations, err := u.declarationRepository.AllDeclarations()
@@ -93,8 +126,18 @@ func (u declarationUsecase) AcceptDeclaration(declaration domain.DeclarationComm
 			}
 		}
 	case 1:
+		dec, err := u.declarationRepository.TimeDeclarationByID(declaration.DeclarationInnerID)
+		if err != nil {
+			return err
+		}
+		err = u.passRepostiory.UpdatePassTime(dec.TimeExtended, dec.PassID)
 		err = u.declarationRepository.AcceptTimeDeclaration(declaration.DeclarationInnerID)
 	case 2:
+		dec, err := u.declarationRepository.RoleDeclarationByID(declaration.DeclarationInnerID)
+		if err != nil {
+			return err
+		}
+		err = u.accountRepostiory.ChangeUserRole(int(dec.CreatorID), int(dec.RoleID))
 		err = u.declarationRepository.AcceptRoleDeclaration(declaration.DeclarationInnerID)
 	default:
 		fmt.Println("Unknown declaration type")

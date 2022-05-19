@@ -34,9 +34,14 @@ type PassRepository interface {
 	DeletePass(passID int32) error
 	PassesByAccountID(accountID int32) ([]Pass, error)
 	CheckPassByData(data string) (*CheckResult, error)
+	FindPassByID(passID int32) (*Pass, error)
+	UpdatePassTime(data time.Time, passID int32) error
+	AddPassage(passage AddPassage) error
+	AllPassages() ([]Passage, error)
 }
 
 type PassUsecase interface {
 	GetUserPasses(accountID int32) ([]Pass, error)
 	CheckPass(data string) (*CheckResult, error)
+	AllPassages() ([]Passage, error)
 }

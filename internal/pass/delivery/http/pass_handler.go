@@ -28,8 +28,21 @@ func NewPassesHandler(router *router.Router, usecase domain.PassUsecase, user do
 
 	router.GET("/api/v1/check/{data}", middleware.ReponseMiddlwareAndLogger(handler.Check))
 
+	router.GET("/api/v1/passages", middleware.ReponseMiddlwareAndLogger(handler.Passages))
+
 }
 
+func (h *passHandler) Passages(ctx *fasthttp.RequestCtx) {
+	passages, err := h.PassUsecase.AllPassages()
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+	ctxBody, err := json.Marshal(passages)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+	ctx.SetBody(ctxBody)
+}
 func (h *passHandler) Passes(ctx *fasthttp.RequestCtx) {
 	aid := ctx.UserValue("AID").(*domain.UserSession)
 	passes, err := h.PassUsecase.GetUserPasses(aid.UserID)

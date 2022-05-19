@@ -8,9 +8,10 @@ type AskRole struct {
 }
 
 type AskRoleDeclaration struct {
-	CreatorID int32  `json:"account_id"`
-	RoleID    int32  `json:"roleID"`
-	Comment   string `json:"comment"`
+	CreatorID   int32  `json:"account_id"`
+	RoleID      int32  `json:"roleID"`
+	Comment     string `json:"comment"`
+	CurrentRole int32  `json:"currentRoleID"`
 }
 
 type AskPass struct {
@@ -24,6 +25,22 @@ type AskTimeDeclaration struct {
 	CreatorID    int32     `json:"creatorID"`
 	PassID       int32     `json:"passID"`
 	TimeExtended time.Time `json:"time"`
+}
+
+type AskTime struct {
+	Comment      string    `json:"comment"`
+	PassID       int32     `json:"passID"`
+	TimeExtended time.Time `json:"time"`
+}
+
+type AskPassDeclarationPass struct {
+	Declaration AskPassDeclaration `json:"declaration"`
+	Pass        Pass               `json:"pass"`
+}
+
+type AskTimeDeclarationPass struct {
+	Declaration AskTimeDeclaration `json:"declaration"`
+	Pass        Pass               `json:"pass"`
 }
 
 type AskPassDeclaration struct {
@@ -56,8 +73,6 @@ type DeclarationRepository interface {
 	DenyPassDeclaration(PassDeclarationID int32) error
 	DenyTimeDeclaration(TimeDeclarationID int32) error
 	PassRequestDeclarationByID(AskPassDeclarationID int32) (*AskPassDeclaration, error)
-	RoleRequestDeclarationByID(AskRoleDeclarationID int32) (*AskRoleDeclaration, error)
-	TimeRequestDeclarationByID(AskPassDeclarationID int32) (*AskTimeDeclaration, error)
 	AllDeclarations() ([]DeclarationCommon, error)
 	AllDeclarationsByAccountID(accountID int32) ([]DeclarationCommon, error)
 	PassRequestDeclarationsAll() ([]DeclarationCommon, error)
@@ -66,6 +81,8 @@ type DeclarationRepository interface {
 	PassRequestDeclarationsByAccountID(accountID int32) ([]DeclarationCommon, error)
 	RoleRequestDeclarationsByAccountID(accountID int32) ([]DeclarationCommon, error)
 	TimeRequestDeclarationsByAccountID(accountID int32) ([]DeclarationCommon, error)
+	RoleDeclarationByID(id int32) (*AskRoleDeclaration, error)
+	TimeDeclarationByID(id int32) (*AskTimeDeclaration, error)
 }
 
 type DeclarationUsecase interface {
@@ -76,4 +93,7 @@ type DeclarationUsecase interface {
 	AllDeclarationsByID(accountID int32) ([]DeclarationCommon, error)
 	AcceptDeclaration(DeclarationCommon) error
 	DenyDeclaration(DeclarationCommon) error
+	RoleDeclarationByID(id int32) (*AskRoleDeclaration, error)
+	PassDeclarationByID(id int32) (*AskPassDeclaration, *Pass, error)
+	TimeDeclarationByID(id int32) (*AskTimeDeclaration, *Pass, error)
 }

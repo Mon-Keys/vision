@@ -80,7 +80,6 @@ DROP TABLE IF EXISTS passage;
 
 CREATE UNLOGGED TABLE IF NOT EXISTS passage (
     passage_id serial NOT NULL PRIMARY KEY,
-    passage_terminal_id int REFERENCES terminal (terminal_id) NOT NULL,
     pass_id int REFERENCES pass (pass_id) NOT NULL,
     passage_status int NOT NULL,
     is_exit boolean NOT NULL,
@@ -123,6 +122,7 @@ CREATE UNLOGGED TABLE IF NOT EXISTS time_request (
     time_request_approved boolean NOT NULL,
     time_request_denied boolean NOT NULL DEFAULT FALSE,
     time_request_created timestamptz DEFAULT now() NOT NULL,
+    time_request_pass_new_expiration_date timestamptz NOT NULL,
     time_request_comment citext
 );
 
